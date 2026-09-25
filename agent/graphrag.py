@@ -1,13 +1,4 @@
-"""GraphRAG grounding.
-
-The LLM never sees raw tables - it gets a curated context pack:
-  1. DOCUMENT SIDE - the official HHGOA_README.md (fraud policy, the
-     five typologies, SAR guidance) chunked by heading, plus any extra
-     markdown in DATA_DIR/policy/. Retrieval is transparent keyword
-     scoring; swap in TigerGraph vector search for scale.
-  2. GRAPH SIDE - evidence claims with provenance, and similar closed
-     cases with outcomes, already distilled to short statements.
-"""
+# Grounding helper - builds policy excerpts and graph evidence bundles for LLM prompts
 import re
 from pathlib import Path
 
@@ -17,8 +8,7 @@ from .config import settings
 class PolicyRetriever:
     def __init__(self, data_dir: Path | None = None):
         base = Path(data_dir or settings.data_dir)
-        # Candidate sources, in priority order: the official README (it
-        # contains the binding policy), then any supplementary docs.
+        # Search official policy docs in repo and dataset dirs
         self.sources = [Path("HHGOA_README.md"), base / "README.md"]
         self.sources += sorted((base / "policy").glob("*.md")) if (base / "policy").exists() else []
         self._chunks: list[dict] = []
@@ -40,6 +30,7 @@ class PolicyRetriever:
                 self._chunks.append({"source": path.name, "title": title, "text": sec.strip()[:2500]})
 
     def retrieve(self, query: str, k: int = 4) -> list[dict]:
+        # Keyword-based retrieval over policy chunks
         self._load()
         terms = set(re.findall(r"[a-z_0-9]+", query.lower()))
         scored = []
@@ -53,7 +44,7 @@ class PolicyRetriever:
 
 def build_context(question: str, evidence_claims: list[dict], similar_cases: list[dict],
                   retriever: PolicyRetriever) -> str:
-    """Assemble the grounded context pack for one LLM call."""
+    # Pack graph evidence, similar past investigations, and relevant policy rules
     parts = ["=== EVIDENCE FROM THE KNOWLEDGE GRAPH (with provenance) ==="]
     for e in evidence_claims:
         parts.append(f"- {e['claim']}  [source={e['source']} ref={e['ref']}]")
@@ -70,3 +61,4 @@ def build_context(question: str, evidence_claims: list[dict], similar_cases: lis
         for ch in chunks:
             parts.append(f"--- {ch['source']} :: {ch['title']} ---\n{ch['text']}")
     return "\n".join(parts)
+

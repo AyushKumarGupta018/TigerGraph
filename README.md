@@ -106,13 +106,12 @@ pytest
 
 ```
 gsql/         Graph schema, loading jobs, installed queries
-agent/        The investigation agent (LangGraph) and all supporting modules
+agent/        The investigation agent and all supporting modules
 benchmark/    Benchmark case runner + answer file writer
 ui/           Streamlit analyst dashboard
-data/sample/  Tiny synthetic dataset + fraud policy so the demo runs anywhere
+data/sample/  Synthetic dataset + fraud policy for testing
 tests/        Unit tests for policy engine, uncertainty model, case lifecycle
-docs/         Technical blog draft + 3-5 minute demo script
-output/       Answer files land here (git-ignored)
+cases/        Official 20 benchmark case answer files (HHG-001.json - HHG-020.json)
 ```
 
 ## Judging criteria mapping

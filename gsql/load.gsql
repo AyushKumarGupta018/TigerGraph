@@ -1,14 +1,6 @@
-// ===================================================================
-// Loading jobs for the HHGOA_IEEE dataset (IEEE-CIS layout).
-//
-// The dataset ships two main files: the transaction table and the
-// identity table (device/connection info, online txns only), plus a
-// prior-cases file with closed investigations from months 1-4.
-// We derive stable IDs for devices (hash of DeviceInfo+OS+browser)
-// upstream in the Python loader so both online and offline modes
-// agree on entity identity.
-// ===================================================================
+// TigerGraph loading jobs for IEEE-CIS transaction, identity, and closed case datasets
 USE GRAPH FraudGraph
+
 
 CREATE LOADING JOB load_transactions FOR GRAPH FraudGraph {
     DEFINE FILENAME f;

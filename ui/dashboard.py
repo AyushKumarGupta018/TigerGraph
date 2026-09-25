@@ -1,11 +1,4 @@
-"""Analyst dashboard - the human window into the agent's work.
-
-Tabs: case detail (gauges, timeline, evidence, decisions), evidence
-graph, next-best-action history (initial vs final - the graded part),
-the L1/L2 approval queue, and the answer-file preview.
-
-Run with:  streamlit run ui/dashboard.py
-"""
+# Streamlit dashboard for fraud analyst case review, evidence graph, and approval queues
 import json
 from pathlib import Path
 
@@ -73,20 +66,18 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-st.title("TigerGraph Agentic Fraud Investigation")
+st.title("TigerGraph Fraud Investigation Dashboard")
 
-# One investigator per session so case memory accumulates live.
+# Initialize stateful investigator session
 if "investigator" not in st.session_state:
     st.session_state.investigator = Investigator()
-    st.session_state.runs = []        # list of (answer, case)
+    st.session_state.runs = []
     st.session_state.approvals = {}
 inv: Investigator = st.session_state.investigator
 
-# ---------------------------------------------------------------------
-# Sidebar: trigger an investigation from the case pack
-# ---------------------------------------------------------------------
+# Sidebar case selection
 with st.sidebar:
-    st.header("Trigger an investigation")
+    st.header("Select Case")
     pack_path = settings.data_dir / "case_pack.csv"
     options = {}
     if pack_path.exists():
@@ -94,14 +85,14 @@ with st.sidebar:
             options[f"{r['case_id']} - {str(r['trigger_text'])[:48]}"] = r.to_dict()
     choice = st.selectbox("Case", list(options.keys())) if options else None
     
-    if st.button("Investigate", type="primary") and choice:
-        with st.spinner("Agent investigating..."):
+    if st.button("Run Investigation", type="primary") and choice:
+        with st.spinner("Investigating transaction graph..."):
             answer, case = inv.run_case(options[choice])
         st.session_state.runs.append((answer, case))
-        st.success(f"Done: {answer['case_id']} -> {answer['case']['verdict']}")
+        st.success(f"Investigation complete: {answer['case_id']} ({answer['case']['verdict'].upper()})")
 
 if not st.session_state.runs:
-    st.info("Pick a case in the sidebar to watch the agent investigate end to end.")
+    st.info("Select a case in the sidebar to run the fraud investigation pipeline.")
     st.stop()
 
 labels = [f"{a['case_id']} | {a['case']['pattern']} | {a['case']['verdict'].upper()}" for a, _ in st.session_state.runs]
@@ -113,8 +104,8 @@ c = answer["case"]
 tab_detail, tab_graph, tab_nba, tab_queue, tab_raw = st.tabs(
     ["Case detail", "Evidence graph", "Next best action", "Approval queue", "Answer file"])
 
-# ---------------------------------------------------------------------
 with tab_detail:
+
     col_gauge, col_stats = st.columns([1.1, 1.9])
     
     with col_gauge:
@@ -221,7 +212,6 @@ with tab_detail:
         st.markdown(f"**Subjects:** {', '.join(sar['subjects'])}")
         st.info(f"**Narrative:**\n\n{sar['narrative']}")
 
-# ---------------------------------------------------------------------
 with tab_graph:
     G = nx.Graph()
     hub = f"TXN {answer['case_id']}"
@@ -254,7 +244,6 @@ with tab_graph:
                       xaxis=dict(visible=False), yaxis=dict(visible=False))
     st.plotly_chart(fig, use_container_width=True)
 
-# ---------------------------------------------------------------------
 with tab_nba:
     nba = answer["next_best_actions"]
     st.markdown("#### Initial (before requested evidence)")
@@ -263,7 +252,6 @@ with tab_nba:
     st.dataframe(pd.DataFrame(nba["final"]), use_container_width=True)
     st.info(f"**What changed:** {nba['what_changed']}")
 
-# ---------------------------------------------------------------------
 with tab_queue:
     pending = []
     for a_, case_ in st.session_state.runs:
@@ -286,6 +274,6 @@ with tab_queue:
                 st.session_state.approvals[key] = "rejected"
                 st.rerun()
 
-# ---------------------------------------------------------------------
 with tab_raw:
     st.json(json.loads(json.dumps(answer, default=str)))
+

@@ -1,15 +1,12 @@
-"""Uncertainty model tests: probability must move for the right
-reasons, patterns must match the official enum, and the section-6
-stopping rule must hold."""
+# Unit tests for uncertainty estimation, fraud pattern typology, and stopping gates
 from agent.uncertainty import PATTERNS, assess, classify_pattern, should_stop
 
 
 def test_model_score_alone_is_a_weak_prior():
-    # README: above 0.7 most flagged txns are STILL legitimate. A bare
-    # high score must land in the uncertain band, not at 'fraud'.
     a = assess({"model_score": 0.88, "channel": "online"})
     assert a.verdict == "uncertain"
     assert 0.30 < a.fraud_probability < 0.70
+
 
 
 def test_testing_sequence_classifies_and_raises():

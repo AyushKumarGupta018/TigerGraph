@@ -1,17 +1,5 @@
-// ===================================================================
-// Fraud investigation knowledge graph schema.
-//
-// Design notes (written for humans):
-//  - We keep Transaction as a vertex (not an edge) because in the
-//    IEEE-CIS data a transaction connects to *many* things at once:
-//    a card, a device, an IP, a merchant, an email domain. A vertex
-//    lets us hang all of that off one hub and traverse in any order.
-//  - FraudCase lives in the same graph as the entities it concerns.
-//    That is the whole point: past investigations become first-class
-//    evidence for future ones (case memory in the graph).
-//  - The embedding on FraudCase powers similarity search so the agent
-//    can ask "have we seen a case like this before?".
-// ===================================================================
+// TigerGraph schema definition for fraud investigation graph
+
 
 CREATE VERTEX Customer (
     PRIMARY_ID customer_id STRING,

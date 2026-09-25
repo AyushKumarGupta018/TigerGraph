@@ -1,11 +1,9 @@
-"""Case lifecycle tests - the audit trail is a legal record, so every
-mutation must leave a timeline entry, and the answer file must carry
-the before/after NBA snapshots the benchmark grades."""
+# Unit tests for case lifecycle, audit trail logging, and answer format generation
 from agent.case_manager import CaseManager
 
 
 class FakeGraph:
-    """Stub graph client - records what would have been upserted."""
+    # Stub graph client to capture persisted cases
     def __init__(self):
         self.upserts = []
 

@@ -1,14 +1,13 @@
-"""Policy engine tests - the guardrails from Fraud Policy v1.0."""
+# Unit tests for policy routing and R1-R10 predicates
 import pytest
 
 from agent.policy_engine import ACTIONS, PolicyEngine
 
 
 def test_unknown_action_is_rejected():
-    # An agent inventing actions outside the catalog is the exact
-    # failure mode this layer exists to stop.
     with pytest.raises(ValueError):
         PolicyEngine().route("WIRE_FUNDS_TO_RECOVERY_ACCOUNT")
+
 
 
 def test_block_card_routing_depends_on_exposure():
