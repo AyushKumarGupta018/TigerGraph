@@ -114,10 +114,4 @@ tests/        Unit tests for policy engine, uncertainty model, case lifecycle
 cases/        Official 20 benchmark case answer files (HHG-001.json - HHG-020.json)
 ```
 
-## Judging criteria mapping
 
-- **Investigation accuracy** - graph-native evidence: multi-hop subgraphs, ring detection, velocity, typology pattern queries.
-- **Next best action** - explicit confidence model; NBA + approval route recorded before *and* after each evidence request.
-- **Explainability** - every case carries a structured reasoning record: evidence used, uncertainty remaining, why each action.
-- **Agentic design** - LangGraph orchestration, tool use via MCP-compatible layer, memory, policy/permission controls.
-- **Innovation** - GraphRAG that fuses policy text with live evidence subgraphs; case memory stored *in the graph*.
