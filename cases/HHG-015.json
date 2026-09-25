@@ -1,0 +1,174 @@
+{
+  "case_id": "HHG-015",
+  "case": {
+    "status": "closed_fraud",
+    "verdict": "fraud",
+    "fraud_probability": 0.85,
+    "pattern": "card_not_present_new_device",
+    "pattern_description": "",
+    "affected_txn_ids": [
+      "3464869"
+    ],
+    "first_suspicious_txn_id": "3464869",
+    "connected_card_ids": [
+      "C05704-K1"
+    ],
+    "connected_device_profiles": [
+      "Trident/7.0 | Windows 8.1 | ie 11.0 for desktop | 1680x1050"
+    ],
+    "exposure_usd": 599.94,
+    "evidence": [
+      {
+        "claim": "Flagged transaction 3464869: $599.94, online, product R, region 327.0, model score 0.77 (treated as a reason to look, not a verdict)",
+        "source": "graph",
+        "ref": "query:case_context(txn_id=3464869)",
+        "entity_ids": [
+          "3464869",
+          "C03042-K1"
+        ]
+      },
+      {
+        "claim": "Device profile 'Trident/7.0 | Windows 8.1 | ie 11.0 for desktop | 1680x1050' is marked NEW for this account (id_15)",
+        "source": "graph",
+        "ref": "query:case_context(txn_id=3464869)",
+        "entity_ids": [
+          "3464869"
+        ]
+      },
+      {
+        "claim": "Out of profile for C03042-K1: amount $599.94 vs average $132.61 (baseline: 68 txns)",
+        "source": "graph",
+        "ref": "query:card_history(card_id=C03042-K1)",
+        "entity_ids": [
+          "3464869"
+        ]
+      },
+      {
+        "claim": "Device profile also used by 1 other card(s) in a 30-day window: C05704-K1",
+        "source": "graph",
+        "ref": "query:device_neighbors(device_profile=...)",
+        "entity_ids": [
+          "C05704-K1"
+        ]
+      },
+      {
+        "claim": "Closed case CC-0615 (confirmed_fraud, pattern card_not_present_new_device) is similar: same customer, same card. Notes: Case CC-0615: cardholder C03042 reported unrecognized activity on card C03042-K1. 1 transaction(s) between 2016-07-16 and 2016-07-16 totaling $174.99 ",
+        "source": "document",
+        "ref": "memory:closed_cases(case_id=CC-0615)",
+        "entity_ids": [
+          "CC-0615"
+        ]
+      },
+      {
+        "claim": "Closed case CC-1313 (cleared, pattern none) is similar: same customer, same card. Notes: Case CC-1313: model scored a $100.08 transaction at 0.87. Cardholder confirmed travel to the billing region in question. Alert cleared.",
+        "source": "document",
+        "ref": "memory:closed_cases(case_id=CC-1313)",
+        "entity_ids": [
+          "CC-1313"
+        ]
+      },
+      {
+        "claim": "Closed case CC-3886 (confirmed_fraud, pattern card_not_present_new_device) is similar: same customer, same card. Notes: Case CC-3886: cardholder C03042 reported unrecognized activity on card C03042-K1. 1 transaction(s) between 2016-09-23 and 2016-09-23 totaling $175.05 ",
+        "source": "document",
+        "ref": "memory:closed_cases(case_id=CC-3886)",
+        "entity_ids": [
+          "CC-3886"
+        ]
+      },
+      {
+        "claim": "Closed case HHG-015 (fraud, pattern card_not_present_new_device) is similar: same customer, same card. Notes: risk_score alert on 3464869 ($599.94, online). Assessed p=0.85 (fraud), pattern card_not_present_new_device. Key evidence: +0.12: Identity record mark",
+        "source": "document",
+        "ref": "memory:closed_cases(case_id=HHG-015)",
+        "entity_ids": [
+          "HHG-015"
+        ]
+      }
+    ],
+    "similar_prior_cases": [
+      "CC-0615",
+      "CC-1313",
+      "CC-3886",
+      "HHG-015"
+    ],
+    "summary": "risk_score alert on 3464869 ($599.94, online). Assessed p=0.85 (fraud), pattern card_not_present_new_device. Key evidence: +0.12: Identity record marks the device as New for this account (id_15); +0.10: Amount and/or product code far outside this card's history; +0.20: Device profile shared with 1 other card(s) in the window: C05704-K1. Exposure $599.94 across 1 transaction(s). Final actions: BLOCK_CARD, CREATE_CASE, FILE_REPORT, MONITOR_CONNECTED_CARDS, WARN_CUSTOMER.",
+    "written_to_graph": true,
+    "graph_case_id": "CASE-2016-HHG-015"
+  },
+  "evidence_requests": [],
+  "next_best_actions": {
+    "initial": [
+      {
+        "action": "BLOCK_CARD",
+        "route": "L1",
+        "reason": "Probability 0.85 with 6 independent signals supports containment"
+      },
+      {
+        "action": "CREATE_CASE",
+        "route": "auto",
+        "reason": "3a: fraud probability above 0.30 requires an internal case"
+      },
+      {
+        "action": "FILE_REPORT",
+        "route": "L2",
+        "reason": "R2/3a: confirmed or strongly suspected fraud with a shared-origin link"
+      },
+      {
+        "action": "MONITOR_CONNECTED_CARDS",
+        "route": "auto",
+        "reason": "R6: shared device profile - protect every card that shares it"
+      },
+      {
+        "action": "WARN_CUSTOMER",
+        "route": "auto",
+        "reason": "Inform the cardholder of the compromise and the protective steps"
+      }
+    ],
+    "final": [
+      {
+        "action": "BLOCK_CARD",
+        "route": "L1",
+        "reason": "Probability 0.85 with 6 independent signals supports containment"
+      },
+      {
+        "action": "CREATE_CASE",
+        "route": "auto",
+        "reason": "3a: fraud probability above 0.30 requires an internal case"
+      },
+      {
+        "action": "FILE_REPORT",
+        "route": "L2",
+        "reason": "R2/3a: confirmed or strongly suspected fraud with a shared-origin link"
+      },
+      {
+        "action": "MONITOR_CONNECTED_CARDS",
+        "route": "auto",
+        "reason": "R6: shared device profile - protect every card that shares it"
+      },
+      {
+        "action": "WARN_CUSTOMER",
+        "route": "auto",
+        "reason": "Inform the cardholder of the compromise and the protective steps"
+      }
+    ],
+    "what_changed": "nothing"
+  },
+  "sar": {
+    "file": true,
+    "reason": "R2/3a: strongly suspected fraud with a shared device profile linking additional cards",
+    "narrative": "Between 2016-11-17 and 2016-11-17, card C03042-K1 belonging to customer C03042 showed 1 suspicious transaction(s) totalling $599.94, including the flagged $599.94 online transaction 3464869 (region 327.0). The activity is consistent with card not present new device. The device profile 'Trident/7.0 | Windows 8.1 | ie 11.0 for desktop | 1680x1050' also transacted on C05704-K1 in the same window, indicating a common actor across cardholders. Related closed cases: CC-0615, CC-1313. Assessed fraud probability 0.85. The pattern of activity, its inconsistency with the cardholder's history, and the supporting evidence above are the basis for suspicion.",
+    "subjects": [
+      "C03042",
+      "C03042-K1",
+      "C05704-K1"
+    ],
+    "total_amount_usd": 599.94,
+    "activity_dates": [
+      "2016-11-17",
+      "2016-11-17"
+    ]
+  },
+  "stop_reason": "Fraud probability 0.85 >= 0.85 supported by 6 independent pieces of evidence.",
+  "tool_calls": 5,
+  "tokens": 0,
+  "latency_s": 10.46
+}

@@ -1,0 +1,84 @@
+// ===================================================================
+// Installed investigation queries. These are the analytical muscles
+// the agent calls as tools. Each one answers a specific investigative
+// question a human analyst would ask.
+// ===================================================================
+USE GRAPH FraudGraph
+
+// -------------------------------------------------------------------
+// 1. Evidence subgraph: everything within 2 hops of a transaction.
+//    This is the first thing an analyst pulls up - the "who, what,
+//    where, on which device" picture around a suspicious payment.
+// -------------------------------------------------------------------
+CREATE QUERY evidence_subgraph(VERTEX<Transaction> txn) FOR GRAPH FraudGraph {
+    SetAccum<EDGE> @@edges;
+    start = {txn};
+    hop1 = SELECT t FROM start:s -(ANY:e)- :t ACCUM @@edges += e;
+    hop2 = SELECT t FROM hop1:s -(ANY:e)- :t ACCUM @@edges += e;
+    PRINT hop1, hop2, @@edges;
+}
+
+// -------------------------------------------------------------------
+// 2. Shared-attribute ring detection: which OTHER customers touch the
+//    same device / IP / email / address as this customer? Fraud rings
+//    reuse infrastructure; legitimate strangers rarely share a device.
+// -------------------------------------------------------------------
+CREATE QUERY shared_attribute_ring(VERTEX<Customer> cust) FOR GRAPH FraudGraph {
+    SumAccum<INT> @shared_links;   // how many attributes each neighbour shares
+    seed = {cust};
+    txns = SELECT t FROM seed -(CUSTOMER_TXN)- Transaction:t;
+    attrs = SELECT a FROM txns -((USED_DEVICE|FROM_IP|USED_EMAIL|BILLED_TO))- :a;
+    other_txns = SELECT t2 FROM attrs -((USED_DEVICE|FROM_IP|USED_EMAIL|BILLED_TO))- Transaction:t2;
+    ring = SELECT c FROM other_txns -(CUSTOMER_TXN)- Customer:c
+           WHERE c != cust
+           ACCUM c.@shared_links += 1
+           ORDER BY c.@shared_links DESC;
+    PRINT ring[ring.customer_id, ring.@shared_links];
+}
+
+// -------------------------------------------------------------------
+// 3. Velocity check: transaction count + total amount for a card in a
+//    trailing window. Card testing and bust-out both show up as a
+//    sudden burst of activity.
+// -------------------------------------------------------------------
+CREATE QUERY velocity_check(VERTEX<Card> card, DATETIME since_dt) FOR GRAPH FraudGraph {
+    SumAccum<INT> @@txn_count;
+    SumAccum<DOUBLE> @@total_amount;
+    AvgAccum @@avg_risk;
+    seed = {card};
+    txns = SELECT t FROM seed -(MADE_TXN)- Transaction:t
+           WHERE t.txn_dt >= since_dt
+           ACCUM @@txn_count += 1, @@total_amount += t.amount, @@avg_risk += t.risk_score;
+    PRINT @@txn_count, @@total_amount, @@avg_risk;
+}
+
+// -------------------------------------------------------------------
+// 4. New-device check: has this customer ever used this device before
+//    the given transaction? A high-risk score on a *known* device is
+//    much less alarming than the same score on a device seen for the
+//    first time (classic account-takeover tell).
+// -------------------------------------------------------------------
+CREATE QUERY device_history(VERTEX<Customer> cust, VERTEX<Device> dev, DATETIME before_dt) FOR GRAPH FraudGraph {
+    SumAccum<INT> @@prior_uses;
+    seed = {cust};
+    txns = SELECT t FROM seed -(CUSTOMER_TXN)- Transaction:t WHERE t.txn_dt < before_dt;
+    hits = SELECT d FROM txns -(USED_DEVICE)- Device:d WHERE d == dev ACCUM @@prior_uses += 1;
+    PRINT @@prior_uses;
+}
+
+// -------------------------------------------------------------------
+// 5. Similar prior cases via case memory. When embeddings are loaded
+//    this becomes a vector top-k search; the structural fallback below
+//    finds prior cases that touch the same customer, device or ring.
+// -------------------------------------------------------------------
+CREATE QUERY similar_cases_structural(VERTEX<Customer> cust) FOR GRAPH FraudGraph {
+    seed = {cust};
+    direct = SELECT fc FROM seed -(CASE_CUSTOMER)- FraudCase:fc;
+    txns = SELECT t FROM seed -(CUSTOMER_TXN)- Transaction:t;
+    attrs = SELECT a FROM txns -((USED_DEVICE|FROM_IP|USED_EMAIL))- :a;
+    ring_txns = SELECT t2 FROM attrs -((USED_DEVICE|FROM_IP|USED_EMAIL))- Transaction:t2;
+    ring_cases = SELECT fc2 FROM ring_txns -(CASE_TXN)- FraudCase:fc2;
+    PRINT direct, ring_cases;
+}
+
+INSTALL QUERY evidence_subgraph, shared_attribute_ring, velocity_check, device_history, similar_cases_structural

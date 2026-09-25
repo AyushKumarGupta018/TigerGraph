@@ -1,0 +1,124 @@
+{
+  "case_id": "HHG-007",
+  "case": {
+    "status": "closed_legitimate",
+    "verdict": "legitimate",
+    "fraud_probability": 0.05,
+    "pattern": "none",
+    "pattern_description": "",
+    "affected_txn_ids": [],
+    "first_suspicious_txn_id": "",
+    "connected_card_ids": [],
+    "connected_device_profiles": [],
+    "exposure_usd": 0.0,
+    "evidence": [
+      {
+        "claim": "Flagged transaction 3514948: $111.92, in_person, product W, region 264.0, model score 0.87 (treated as a reason to look, not a verdict)",
+        "source": "graph",
+        "ref": "query:case_context(txn_id=3514948)",
+        "entity_ids": [
+          "3514948",
+          "C09933-K1"
+        ]
+      },
+      {
+        "claim": "Closed case HHG-007 (legitimate, pattern none) is similar: same customer, same card. Notes: risk_score alert on 3514948 ($111.92, in_person). Assessed p=0.05 (legitimate), pattern none. Key evidence: +0.06: Similar closed case CC-0104 was con",
+        "source": "document",
+        "ref": "memory:closed_cases(case_id=HHG-007)",
+        "entity_ids": [
+          "HHG-007"
+        ]
+      },
+      {
+        "claim": "Closed case CC-0104 (confirmed_fraud, pattern out_of_region_use) is similar: same customer. Notes: Case CC-0104: cardholder C09933 reported unrecognized activity on card C09933-K2. 1 transaction(s) between 2016-07-04 and 2016-07-04 totaling $92.02 w",
+        "source": "document",
+        "ref": "memory:closed_cases(case_id=CC-0104)",
+        "entity_ids": [
+          "CC-0104"
+        ]
+      },
+      {
+        "claim": "Closed case CC-0657 (cleared, pattern none) is similar: same customer. Notes: Case CC-0657: model scored a $1,769.94 transaction at 0.90. Cardholder confirmed the purchase. Amount unusual for this customer but consistent with th",
+        "source": "document",
+        "ref": "memory:closed_cases(case_id=CC-0657)",
+        "entity_ids": [
+          "CC-0657"
+        ]
+      },
+      {
+        "claim": "Closed case CC-0765 (confirmed_fraud, pattern out_of_region_use) is similar: same customer. Notes: Case CC-0765: cardholder C09933 reported unrecognized activity on card C09933-K2. 13 transaction(s) between 2016-07-12 and 2016-07-18 totaling $1,664.",
+        "source": "document",
+        "ref": "memory:closed_cases(case_id=CC-0765)",
+        "entity_ids": [
+          "CC-0765"
+        ]
+      },
+      {
+        "claim": "Customer confirms they made this transaction themselves",
+        "source": "customer",
+        "ref": "evidence_request:1",
+        "entity_ids": []
+      }
+    ],
+    "similar_prior_cases": [
+      "HHG-007",
+      "CC-0104",
+      "CC-0657",
+      "CC-0765"
+    ],
+    "summary": "risk_score alert on 3514948 ($111.92, in_person). Assessed p=0.05 (legitimate), pattern none. Key evidence: +0.06: Similar closed case CC-0104 was confirmed fraud; +0.06: Similar closed case CC-0765 was confirmed fraud; -0.06: Similar closed case CC-0657 was cleared as a false alarm. Exposure $0.00 across 0 transaction(s). Final actions: ALLOW_TRANSACTION, CLOSE_NO_FRAUD.",
+    "written_to_graph": true,
+    "graph_case_id": "CASE-2016-HHG-007"
+  },
+  "evidence_requests": [
+    {
+      "type": "customer_validation",
+      "asked_after_step": 5,
+      "assumed_response": "Customer confirms they made this transaction themselves"
+    }
+  ],
+  "next_best_actions": {
+    "initial": [
+      {
+        "action": "VERIFY_WITH_CUSTOMER",
+        "route": "auto",
+        "reason": "R1: assessed probability below 0.70 - confirm before blocking"
+      },
+      {
+        "action": "STEP_UP_AUTH",
+        "route": "auto",
+        "reason": "Require a challenge before further activity"
+      },
+      {
+        "action": "MONITOR_CARD",
+        "route": "auto",
+        "reason": "Raise monitoring while evidence is pending"
+      }
+    ],
+    "final": [
+      {
+        "action": "ALLOW_TRANSACTION",
+        "route": "auto",
+        "reason": "Probability 0.05 is low; customer confirmed the transaction (R3)"
+      },
+      {
+        "action": "CLOSE_NO_FRAUD",
+        "route": "auto",
+        "reason": "R3: close as legitimate"
+      }
+    ],
+    "what_changed": "The assumed evidence (customer_validation) moved probability to 0.05 (legitimate); added ['ALLOW_TRANSACTION', 'CLOSE_NO_FRAUD'], dropped ['MONITOR_CARD', 'STEP_UP_AUTH', 'VERIFY_WITH_CUSTOMER']."
+  },
+  "sar": {
+    "file": false,
+    "reason": "No filing: verdict is not fraud",
+    "narrative": "",
+    "subjects": [],
+    "total_amount_usd": 0,
+    "activity_dates": []
+  },
+  "stop_reason": "A verification response settled the question.",
+  "tool_calls": 4,
+  "tokens": 0,
+  "latency_s": 0.07
+}

@@ -1,0 +1,53 @@
+// ===================================================================
+// Loading jobs for the HHGOA_IEEE dataset (IEEE-CIS layout).
+//
+// The dataset ships two main files: the transaction table and the
+// identity table (device/connection info, online txns only), plus a
+// prior-cases file with closed investigations from months 1-4.
+// We derive stable IDs for devices (hash of DeviceInfo+OS+browser)
+// upstream in the Python loader so both online and offline modes
+// agree on entity identity.
+// ===================================================================
+USE GRAPH FraudGraph
+
+CREATE LOADING JOB load_transactions FOR GRAPH FraudGraph {
+    DEFINE FILENAME f;
+    // Expected columns:
+    // TransactionID,CustomerID,txn_dt,TransactionAmt,ProductCD,
+    // card1,card4,card6,addr1,P_emaildomain,merchant_id,risk_score
+    LOAD f TO VERTEX Transaction VALUES ($"TransactionID", $"txn_dt", $"TransactionAmt", $"ProductCD", $"risk_score", _),
+           TO VERTEX Customer VALUES ($"CustomerID", _, _, _),
+           TO VERTEX Card VALUES ($"card1", $"card4", $"card6"),
+           TO VERTEX Merchant VALUES ($"merchant_id", _),
+           TO VERTEX EmailDomain VALUES ($"P_emaildomain"),
+           TO VERTEX Address VALUES ($"addr1"),
+           TO EDGE OWNS_CARD VALUES ($"CustomerID", $"card1"),
+           TO EDGE MADE_TXN VALUES ($"card1", $"TransactionID"),
+           TO EDGE CUSTOMER_TXN VALUES ($"CustomerID", $"TransactionID"),
+           TO EDGE AT_MERCHANT VALUES ($"TransactionID", $"merchant_id"),
+           TO EDGE USED_EMAIL VALUES ($"TransactionID", $"P_emaildomain"),
+           TO EDGE BILLED_TO VALUES ($"TransactionID", $"addr1")
+    USING header="true", separator=",";
+}
+
+CREATE LOADING JOB load_identity FOR GRAPH FraudGraph {
+    DEFINE FILENAME f;
+    // Expected columns: TransactionID,DeviceType,DeviceInfo,os,browser,device_id,ip_hash
+    LOAD f TO VERTEX Device VALUES ($"device_id", $"DeviceType", $"DeviceInfo", $"os", $"browser"),
+           TO VERTEX IPAddress VALUES ($"ip_hash", _),
+           TO EDGE USED_DEVICE VALUES ($"TransactionID", $"device_id"),
+           TO EDGE FROM_IP VALUES ($"TransactionID", $"ip_hash")
+    USING header="true", separator=",";
+}
+
+CREATE LOADING JOB load_prior_cases FOR GRAPH FraudGraph {
+    DEFINE FILENAME f;
+    // Closed investigations from the first four months - this is the
+    // seed for case memory. Expected columns:
+    // case_id,customer_id,txn_ids(pipe-separated),pattern,outcome,summary,closed_dt
+    LOAD f TO VERTEX FraudCase VALUES ($"case_id", $"closed_dt", "resolved", $"pattern", _, _, $"summary", $"outcome", _),
+           TO EDGE CASE_CUSTOMER VALUES ($"case_id", $"customer_id")
+    USING header="true", separator=",";
+    // txn_ids are exploded to CASE_TXN edges by the Python ingest helper
+    // (flatten in GSQL is possible but the helper keeps this readable).
+}

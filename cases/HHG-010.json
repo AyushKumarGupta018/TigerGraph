@@ -1,0 +1,225 @@
+{
+  "case_id": "HHG-010",
+  "case": {
+    "status": "closed_legitimate",
+    "verdict": "legitimate",
+    "fraud_probability": 0.24,
+    "pattern": "none",
+    "pattern_description": "",
+    "affected_txn_ids": [],
+    "first_suspicious_txn_id": "",
+    "connected_card_ids": [
+      "C00750-K1",
+      "C00854-K1",
+      "C01688-K1",
+      "C01999-K2",
+      "C02079-K1",
+      "C02231-K2",
+      "C02250-K1",
+      "C02280-K1",
+      "C02285-K1",
+      "C02377-K1",
+      "C02716-K1",
+      "C02848-K1",
+      "C03036-K1",
+      "C03066-K1",
+      "C03169-K1",
+      "C03218-K1",
+      "C03285-K1",
+      "C03343-K1",
+      "C03533-K1",
+      "C03714-K1",
+      "C03738-K1",
+      "C04024-K1",
+      "C04108-K1",
+      "C04190-K1",
+      "C04265-K1",
+      "C04269-K1",
+      "C04860-K1",
+      "C05244-K1",
+      "C05508-K1",
+      "C05625-K1",
+      "C05814-K3",
+      "C06070-K1",
+      "C06224-K1",
+      "C06308-K1",
+      "C06818-K1",
+      "C06914-K1",
+      "C07185-K1",
+      "C07212-K1",
+      "C07338-K1",
+      "C07518-K1",
+      "C07552-K1",
+      "C07745-K1",
+      "C07780-K1",
+      "C07925-K1",
+      "C08269-K1",
+      "C08489-K1",
+      "C08918-K1",
+      "C08989-K2",
+      "C09065-K1",
+      "C09165-K1",
+      "C09241-K1",
+      "C09249-K1",
+      "C09363-K1",
+      "C10149-K1",
+      "C10308-K1",
+      "C10507-K2",
+      "C11000-K1",
+      "C11143-K1",
+      "C11309-K1",
+      "C11381-K1",
+      "C11709-K1",
+      "C11929-K1",
+      "C12690-K1",
+      "C12897-K1",
+      "C12961-K1"
+    ],
+    "connected_device_profiles": [
+      "Windows | Windows 10 | edge 16.0 | 1366x768"
+    ],
+    "exposure_usd": 0.0,
+    "evidence": [
+      {
+        "claim": "Flagged transaction 3506725: $1000.03, online, product R, region 469.0, model score 0.90 (treated as a reason to look, not a verdict)",
+        "source": "graph",
+        "ref": "query:case_context(txn_id=3506725)",
+        "entity_ids": [
+          "3506725",
+          "C10434-K1"
+        ]
+      },
+      {
+        "claim": "Device profile 'Windows | Windows 10 | edge 16.0 | 1366x768' is marked NEW for this account (id_15)",
+        "source": "graph",
+        "ref": "query:case_context(txn_id=3506725)",
+        "entity_ids": [
+          "3506725"
+        ]
+      },
+      {
+        "claim": "Out of profile for C10434-K1: amount $1000.03 vs average $131.25 (baseline: 33 txns)",
+        "source": "graph",
+        "ref": "query:card_history(card_id=C10434-K1)",
+        "entity_ids": [
+          "3506725"
+        ]
+      },
+      {
+        "claim": "Device profile also used by 65 other card(s) in a 30-day window: C00750-K1, C00854-K1, C01688-K1, C01999-K2, C02079-K1",
+        "source": "graph",
+        "ref": "query:device_neighbors(device_profile=...)",
+        "entity_ids": [
+          "C00750-K1",
+          "C00854-K1",
+          "C01688-K1",
+          "C01999-K2",
+          "C02079-K1",
+          "C02231-K2",
+          "C02250-K1",
+          "C02280-K1",
+          "C02285-K1",
+          "C02377-K1"
+        ]
+      },
+      {
+        "claim": "Closed case CC-0873 (cleared, pattern none) is similar: same customer, same card. Notes: Case CC-0873: model scored a $50.05 transaction at 0.93. Cardholder confirmed travel to the billing region in question. Alert cleared.",
+        "source": "document",
+        "ref": "memory:closed_cases(case_id=CC-0873)",
+        "entity_ids": [
+          "CC-0873"
+        ]
+      },
+      {
+        "claim": "Closed case HHG-010 (legitimate, pattern none) is similar: same customer, same card. Notes: risk_score alert on 3506725 ($1000.03, online). Assessed p=0.24 (legitimate), pattern none. Key evidence: +0.12: Identity record marks the device as N",
+        "source": "document",
+        "ref": "memory:closed_cases(case_id=HHG-010)",
+        "entity_ids": [
+          "HHG-010"
+        ]
+      },
+      {
+        "claim": "Closed case CC-0021 (cleared, pattern none) is similar: shared card(s): C04265-K1. Notes: Case CC-0021: model scored a $50.09 transaction at 0.86. Cardholder confirmed travel to the billing region in question. Alert cleared.",
+        "source": "document",
+        "ref": "memory:closed_cases(case_id=CC-0021)",
+        "entity_ids": [
+          "CC-0021"
+        ]
+      },
+      {
+        "claim": "Closed case CC-0023 (cleared, pattern none) is similar: shared card(s): C11309-K1. Notes: Case CC-0023: model scored a $24.91 transaction at 0.94. Cardholder confirmed travel to the billing region in question. Alert cleared.",
+        "source": "document",
+        "ref": "memory:closed_cases(case_id=CC-0023)",
+        "entity_ids": [
+          "CC-0023"
+        ]
+      },
+      {
+        "claim": "Customer confirms they made this transaction themselves",
+        "source": "customer",
+        "ref": "evidence_request:1",
+        "entity_ids": []
+      }
+    ],
+    "similar_prior_cases": [
+      "CC-0873",
+      "HHG-010",
+      "CC-0021",
+      "CC-0023"
+    ],
+    "summary": "risk_score alert on 3506725 ($1000.03, online). Assessed p=0.24 (legitimate), pattern none. Key evidence: +0.12: Identity record marks the device as New for this account (id_15); +0.10: Amount and/or product code far outside this card's history; +0.20: Device profile shared with 65 other card(s) in the window: C00750-K1, C00854-K1, C01688-K1, C01999-K2. Exposure $0.00 across 0 transaction(s). Final actions: ALLOW_TRANSACTION, CLOSE_NO_FRAUD.",
+    "written_to_graph": true,
+    "graph_case_id": "CASE-2016-HHG-010"
+  },
+  "evidence_requests": [
+    {
+      "type": "customer_validation",
+      "asked_after_step": 8,
+      "assumed_response": "Customer confirms they made this transaction themselves"
+    }
+  ],
+  "next_best_actions": {
+    "initial": [
+      {
+        "action": "VERIFY_WITH_CUSTOMER",
+        "route": "auto",
+        "reason": "R1: assessed probability below 0.70 - confirm before blocking"
+      },
+      {
+        "action": "STEP_UP_AUTH",
+        "route": "auto",
+        "reason": "Require a challenge before further activity"
+      },
+      {
+        "action": "MONITOR_CARD",
+        "route": "auto",
+        "reason": "Raise monitoring while evidence is pending"
+      }
+    ],
+    "final": [
+      {
+        "action": "ALLOW_TRANSACTION",
+        "route": "auto",
+        "reason": "Probability 0.24 is low; customer confirmed the transaction (R3)"
+      },
+      {
+        "action": "CLOSE_NO_FRAUD",
+        "route": "auto",
+        "reason": "R3: close as legitimate"
+      }
+    ],
+    "what_changed": "The assumed evidence (customer_validation) moved probability to 0.24 (legitimate); added ['ALLOW_TRANSACTION', 'CLOSE_NO_FRAUD'], dropped ['MONITOR_CARD', 'STEP_UP_AUTH', 'VERIFY_WITH_CUSTOMER']."
+  },
+  "sar": {
+    "file": false,
+    "reason": "No filing: verdict is not fraud",
+    "narrative": "",
+    "subjects": [],
+    "total_amount_usd": 0,
+    "activity_dates": []
+  },
+  "stop_reason": "A verification response settled the question.",
+  "tool_calls": 5,
+  "tokens": 0,
+  "latency_s": 10.86
+}

@@ -1,0 +1,167 @@
+{
+  "case_id": "HHG-004",
+  "case": {
+    "status": "closed_fraud",
+    "verdict": "fraud",
+    "fraud_probability": 0.75,
+    "pattern": "card_not_present_new_device",
+    "pattern_description": "",
+    "affected_txn_ids": [
+      "3580804",
+      "3583227",
+      "3585446"
+    ],
+    "first_suspicious_txn_id": "3580804",
+    "connected_card_ids": [],
+    "connected_device_profiles": [],
+    "exposure_usd": 305.06,
+    "evidence": [
+      {
+        "claim": "Flagged transaction 3583227: $128.33, online, product C, region nan, model score 0.34 (treated as a reason to look, not a verdict)",
+        "source": "graph",
+        "ref": "query:case_context(txn_id=3583227)",
+        "entity_ids": [
+          "3583227",
+          "C08106-K1"
+        ]
+      },
+      {
+        "claim": "Out of profile for C08106-K1: amount $128.33 vs average $35.31 (baseline: 209 txns)",
+        "source": "graph",
+        "ref": "query:card_history(card_id=C08106-K1)",
+        "entity_ids": [
+          "3583227"
+        ]
+      },
+      {
+        "claim": "Burst: 3 out-of-profile online purchases within 48h",
+        "source": "graph",
+        "ref": "query:card_window(card_id=C08106-K1, hours=48)",
+        "entity_ids": [
+          "3580804",
+          "3585446",
+          "3583227"
+        ]
+      },
+      {
+        "claim": "Charge matches this card's own recurring rhythm: similar amount roughly monthly",
+        "source": "graph",
+        "ref": "query:recurring_pattern(card_id=C08106-K1)",
+        "entity_ids": [
+          "3583227"
+        ]
+      },
+      {
+        "claim": "Closed case CC-0696 (cleared, pattern none) is similar: same customer, same card. Notes: Case CC-0696: model scored a $13.68 transaction at 0.83. Cardholder confirmed travel to the billing region in question. Alert cleared.",
+        "source": "document",
+        "ref": "memory:closed_cases(case_id=CC-0696)",
+        "entity_ids": [
+          "CC-0696"
+        ]
+      },
+      {
+        "claim": "Closed case CC-1736 (confirmed_fraud, pattern card_not_present_fraud) is similar: same customer, same card. Notes: Case CC-1736: cardholder C08106 reported unrecognized activity on card C08106-K1. 1 transaction(s) between 2016-08-05 and 2016-08-05 totaling $9.90 we",
+        "source": "document",
+        "ref": "memory:closed_cases(case_id=CC-1736)",
+        "entity_ids": [
+          "CC-1736"
+        ]
+      },
+      {
+        "claim": "Closed case CC-2121 (confirmed_fraud, pattern card_not_present_fraud) is similar: same customer, same card. Notes: Case CC-2121: cardholder C08106 reported unrecognized activity on card C08106-K1. 1 transaction(s) between 2016-08-14 and 2016-08-14 totaling $102.68 ",
+        "source": "document",
+        "ref": "memory:closed_cases(case_id=CC-2121)",
+        "entity_ids": [
+          "CC-2121"
+        ]
+      },
+      {
+        "claim": "Closed case CC-3778 (confirmed_fraud, pattern card_not_present_fraud) is similar: same customer, same card. Notes: Case CC-3778: cardholder C08106 reported unrecognized activity on card C08106-K1. 1 transaction(s) between 2016-09-20 and 2016-09-20 totaling $58.42 w",
+        "source": "document",
+        "ref": "memory:closed_cases(case_id=CC-3778)",
+        "entity_ids": [
+          "CC-3778"
+        ]
+      },
+      {
+        "claim": "Customer reported the transaction as unrecognised (trigger message)",
+        "source": "customer",
+        "ref": "case_pack:trigger_text",
+        "entity_ids": [
+          "3583227"
+        ]
+      },
+      {
+        "claim": "Customer states they did not make this transaction and still has the card",
+        "source": "customer",
+        "ref": "evidence_request:1",
+        "entity_ids": []
+      }
+    ],
+    "similar_prior_cases": [
+      "CC-0696",
+      "CC-1736",
+      "CC-2121",
+      "CC-3778"
+    ],
+    "summary": "customer_report alert on 3583227 ($128.33, online). Assessed p=0.75 (fraud), pattern card_not_present_new_device. Key evidence: +0.12: Identity record marks the device as New for this account (id_15); +0.15: Burst of 3 out-of-profile online purchases within 48h; +0.10: Amount and/or product code far outside this card's history. Exposure $305.06 across 3 transaction(s). Final actions: BLOCK_CARD, CREATE_CASE, WARN_CUSTOMER.",
+    "written_to_graph": true,
+    "graph_case_id": "CASE-2016-HHG-004"
+  },
+  "evidence_requests": [
+    {
+      "type": "customer_validation",
+      "asked_after_step": 9,
+      "assumed_response": "Customer states they did not make this transaction and still has the card"
+    }
+  ],
+  "next_best_actions": {
+    "initial": [
+      {
+        "action": "BLOCK_CARD",
+        "route": "L1",
+        "reason": "R2: customer denied the transaction"
+      },
+      {
+        "action": "CREATE_CASE",
+        "route": "auto",
+        "reason": "3a: fraud probability above 0.30 requires an internal case"
+      },
+      {
+        "action": "WARN_CUSTOMER",
+        "route": "auto",
+        "reason": "Inform the cardholder of the compromise and the protective steps"
+      }
+    ],
+    "final": [
+      {
+        "action": "BLOCK_CARD",
+        "route": "L1",
+        "reason": "R2: customer denied the transaction"
+      },
+      {
+        "action": "CREATE_CASE",
+        "route": "auto",
+        "reason": "3a: fraud probability above 0.30 requires an internal case"
+      },
+      {
+        "action": "WARN_CUSTOMER",
+        "route": "auto",
+        "reason": "Inform the cardholder of the compromise and the protective steps"
+      }
+    ],
+    "what_changed": "The evidence confirmed the initial view; the actions stand."
+  },
+  "sar": {
+    "file": false,
+    "reason": "No filing: exposure under $1,000 with no shared-origin link (3a)",
+    "narrative": "",
+    "subjects": [],
+    "total_amount_usd": 0,
+    "activity_dates": []
+  },
+  "stop_reason": "A verification response settled the question.",
+  "tool_calls": 4,
+  "tokens": 0,
+  "latency_s": 0.11
+}

@@ -1,0 +1,187 @@
+{
+  "case_id": "HHG-005",
+  "case": {
+    "status": "closed_fraud",
+    "verdict": "fraud",
+    "fraud_probability": 0.99,
+    "pattern": "none",
+    "pattern_description": "",
+    "affected_txn_ids": [
+      "3523199"
+    ],
+    "first_suspicious_txn_id": "3523199",
+    "connected_card_ids": [
+      "C08299-K1",
+      "C11496-K1",
+      "C11539-K1",
+      "C12267-K1"
+    ],
+    "connected_device_profiles": [
+      "iOS Device | iOS 9.3.5 | mobile safari 9.0 | 1024x768"
+    ],
+    "exposure_usd": 100.07,
+    "evidence": [
+      {
+        "claim": "Flagged transaction 3523199: $100.07, online, product R, region 330.0, model score 0.54 (treated as a reason to look, not a verdict)",
+        "source": "graph",
+        "ref": "query:case_context(txn_id=3523199)",
+        "entity_ids": [
+          "3523199",
+          "C02923-K1"
+        ]
+      },
+      {
+        "claim": "Device profile 'iOS Device | iOS 9.3.5 | mobile safari 9.0 | 1024x768' is marked NEW for this account (id_15)",
+        "source": "graph",
+        "ref": "query:case_context(txn_id=3523199)",
+        "entity_ids": [
+          "3523199"
+        ]
+      },
+      {
+        "claim": "Device profile also used by 4 other card(s) in a 30-day window: C08299-K1, C11496-K1, C11539-K1, C12267-K1",
+        "source": "graph",
+        "ref": "query:device_neighbors(device_profile=...)",
+        "entity_ids": [
+          "C08299-K1",
+          "C11496-K1",
+          "C11539-K1",
+          "C12267-K1"
+        ]
+      },
+      {
+        "claim": "Closed case CC-2400 (confirmed_fraud, pattern account_takeover) is similar: same customer, same card. Notes: Case CC-2400: cardholder C02923 reported unrecognized activity on card C02923-K1. 3 transaction(s) between 2016-08-18 and 2016-08-19 totaling $350.99 ",
+        "source": "document",
+        "ref": "memory:closed_cases(case_id=CC-2400)",
+        "entity_ids": [
+          "CC-2400"
+        ]
+      },
+      {
+        "claim": "Closed case CC-2717 (confirmed_fraud, pattern account_takeover) is similar: same customer, same card. Notes: Case CC-2717: cardholder C02923 reported unrecognized activity on card C02923-K1. 6 transaction(s) between 2016-08-25 and 2016-08-27 totaling $896.08 ",
+        "source": "document",
+        "ref": "memory:closed_cases(case_id=CC-2717)",
+        "entity_ids": [
+          "CC-2717"
+        ]
+      },
+      {
+        "claim": "Closed case CC-2857 (confirmed_fraud, pattern account_takeover) is similar: same customer, same card. Notes: Case CC-2857: cardholder C02923 reported unrecognized activity on card C02923-K1. 2 transaction(s) between 2016-08-30 and 2016-08-30 totaling $539.97 ",
+        "source": "document",
+        "ref": "memory:closed_cases(case_id=CC-2857)",
+        "entity_ids": [
+          "CC-2857"
+        ]
+      },
+      {
+        "claim": "Closed case HHG-005 (fraud, pattern none) is similar: same customer, same card. Notes: risk_score alert on 3523199 ($100.07, online). Assessed p=0.99 (fraud), pattern none. Key evidence: +0.12: Identity record marks the device as New for",
+        "source": "document",
+        "ref": "memory:closed_cases(case_id=HHG-005)",
+        "entity_ids": [
+          "HHG-005"
+        ]
+      },
+      {
+        "claim": "Customer states they did not make this transaction and still has the card",
+        "source": "customer",
+        "ref": "evidence_request:1",
+        "entity_ids": []
+      }
+    ],
+    "similar_prior_cases": [
+      "CC-2400",
+      "CC-2717",
+      "CC-2857",
+      "HHG-005"
+    ],
+    "summary": "risk_score alert on 3523199 ($100.07, online). Assessed p=0.99 (fraud), pattern none. Key evidence: +0.12: Identity record marks the device as New for this account (id_15); +0.20: Device profile shared with 4 other card(s) in the window: C08299-K1, C11496-K1, C11539-K1, C12267-K1; +0.06: Similar closed case CC-2400 was confirmed fraud. Exposure $100.07 across 1 transaction(s). Final actions: BLOCK_CARD, CREATE_CASE, FILE_REPORT, MONITOR_CONNECTED_CARDS, WARN_CUSTOMER.",
+    "written_to_graph": true,
+    "graph_case_id": "CASE-2016-HHG-005"
+  },
+  "evidence_requests": [
+    {
+      "type": "customer_validation",
+      "asked_after_step": 7,
+      "assumed_response": "Customer states they did not make this transaction and still has the card"
+    }
+  ],
+  "next_best_actions": {
+    "initial": [
+      {
+        "action": "BLOCK_CARD",
+        "route": "L1",
+        "reason": "Probability 0.81 with 5 independent signals supports containment"
+      },
+      {
+        "action": "CREATE_CASE",
+        "route": "auto",
+        "reason": "3a: fraud probability above 0.30 requires an internal case"
+      },
+      {
+        "action": "FILE_REPORT",
+        "route": "L2",
+        "reason": "R2/3a: confirmed or strongly suspected fraud with a shared-origin link"
+      },
+      {
+        "action": "MONITOR_CONNECTED_CARDS",
+        "route": "auto",
+        "reason": "R6: shared device profile - protect every card that shares it"
+      },
+      {
+        "action": "WARN_CUSTOMER",
+        "route": "auto",
+        "reason": "Inform the cardholder of the compromise and the protective steps"
+      }
+    ],
+    "final": [
+      {
+        "action": "BLOCK_CARD",
+        "route": "L1",
+        "reason": "R2: customer denied the transaction"
+      },
+      {
+        "action": "CREATE_CASE",
+        "route": "auto",
+        "reason": "3a: fraud probability above 0.30 requires an internal case"
+      },
+      {
+        "action": "FILE_REPORT",
+        "route": "L2",
+        "reason": "R2/3a: confirmed or strongly suspected fraud with a shared-origin link"
+      },
+      {
+        "action": "MONITOR_CONNECTED_CARDS",
+        "route": "auto",
+        "reason": "R6: shared device profile - protect every card that shares it"
+      },
+      {
+        "action": "WARN_CUSTOMER",
+        "route": "auto",
+        "reason": "Inform the cardholder of the compromise and the protective steps"
+      }
+    ],
+    "what_changed": "The evidence confirmed the initial view; the actions stand."
+  },
+  "sar": {
+    "file": true,
+    "reason": "R2/3a: strongly suspected fraud with a shared device profile linking additional cards",
+    "narrative": "Between 2016-12-07 and 2016-12-07, card C02923-K1 belonging to customer C02923 showed 1 suspicious transaction(s) totalling $100.07, including the flagged $100.07 online transaction 3523199 (region 330.0). The activity is consistent with none. The device profile 'iOS Device | iOS 9.3.5 | mobile safari 9.0 | 1024x768' also transacted on C08299-K1, C11496-K1, C11539-K1, C12267-K1 in the same window, indicating a common actor across cardholders. Assumed customer contact: Customer states they did not make this transaction and still has the card. Related closed cases: CC-2400, CC-2717. Assessed fraud probability 0.99. The pattern of activity, its inconsistency with the cardholder's history, and the supporting evidence above are the basis for suspicion.",
+    "subjects": [
+      "C02923",
+      "C02923-K1",
+      "C08299-K1",
+      "C11496-K1",
+      "C11539-K1",
+      "C12267-K1"
+    ],
+    "total_amount_usd": 100.07,
+    "activity_dates": [
+      "2016-12-07",
+      "2016-12-07"
+    ]
+  },
+  "stop_reason": "A verification response settled the question.",
+  "tool_calls": 5,
+  "tokens": 0,
+  "latency_s": 14.08
+}

@@ -1,0 +1,131 @@
+{
+  "case_id": "HHG-001",
+  "case": {
+    "status": "closed_fraud",
+    "verdict": "fraud",
+    "fraud_probability": 0.81,
+    "pattern": "none",
+    "pattern_description": "",
+    "affected_txn_ids": [
+      "3514030"
+    ],
+    "first_suspicious_txn_id": "3514030",
+    "connected_card_ids": [],
+    "connected_device_profiles": [],
+    "exposure_usd": 77.07,
+    "evidence": [
+      {
+        "claim": "Flagged transaction 3514030: $77.07, in_person, product W, region 444.0, model score 0.61 (treated as a reason to look, not a verdict)",
+        "source": "graph",
+        "ref": "query:case_context(txn_id=3514030)",
+        "entity_ids": [
+          "3514030",
+          "C12382-K1"
+        ]
+      },
+      {
+        "claim": "Closed case CC-1066 (confirmed_fraud, pattern out_of_region_use) is similar: same customer, same card. Notes: Case CC-1066: cardholder C12382 reported unrecognized activity on card C12382-K1. 1 transaction(s) between 2016-07-23 and 2016-07-23 totaling $170.98 ",
+        "source": "document",
+        "ref": "memory:closed_cases(case_id=CC-1066)",
+        "entity_ids": [
+          "CC-1066"
+        ]
+      },
+      {
+        "claim": "Closed case CC-1673 (confirmed_fraud, pattern card_not_present_new_device) is similar: same customer, same card. Notes: Case CC-1673: cardholder C12382 reported unrecognized activity on card C12382-K1. 1 transaction(s) between 2016-08-04 and 2016-08-04 totaling $199.98 ",
+        "source": "document",
+        "ref": "memory:closed_cases(case_id=CC-1673)",
+        "entity_ids": [
+          "CC-1673"
+        ]
+      },
+      {
+        "claim": "Closed case CC-2964 (confirmed_fraud, pattern out_of_region_use) is similar: same customer, same card. Notes: Case CC-2964: cardholder C12382 reported unrecognized activity on card C12382-K1. 1 transaction(s) between 2016-09-01 and 2016-09-01 totaling $171.08 ",
+        "source": "document",
+        "ref": "memory:closed_cases(case_id=CC-2964)",
+        "entity_ids": [
+          "CC-2964"
+        ]
+      },
+      {
+        "claim": "Closed case CC-3587 (confirmed_fraud, pattern out_of_region_use) is similar: same customer, same card. Notes: Case CC-3587: cardholder C12382 reported unrecognized activity on card C12382-K1. 1 transaction(s) between 2016-09-16 and 2016-09-16 totaling $49.09 w",
+        "source": "document",
+        "ref": "memory:closed_cases(case_id=CC-3587)",
+        "entity_ids": [
+          "CC-3587"
+        ]
+      },
+      {
+        "claim": "Customer states they did not make this transaction and still has the card",
+        "source": "customer",
+        "ref": "evidence_request:1",
+        "entity_ids": []
+      }
+    ],
+    "similar_prior_cases": [
+      "CC-1066",
+      "CC-1673",
+      "CC-2964",
+      "CC-3587"
+    ],
+    "summary": "risk_score alert on 3514030 ($77.07, in_person). Assessed p=0.81 (fraud), pattern none. Key evidence: +0.06: Similar closed case CC-1066 was confirmed fraud; +0.06: Similar closed case CC-1673 was confirmed fraud; +0.06: Similar closed case CC-2964 was confirmed fraud. Exposure $77.07 across 1 transaction(s). Final actions: BLOCK_CARD, CREATE_CASE, WARN_CUSTOMER.",
+    "written_to_graph": true,
+    "graph_case_id": "CASE-2016-HHG-001"
+  },
+  "evidence_requests": [
+    {
+      "type": "customer_validation",
+      "asked_after_step": 5,
+      "assumed_response": "Customer states they did not make this transaction and still has the card"
+    }
+  ],
+  "next_best_actions": {
+    "initial": [
+      {
+        "action": "VERIFY_WITH_CUSTOMER",
+        "route": "auto",
+        "reason": "R1: assessed probability below 0.70 - confirm before blocking"
+      },
+      {
+        "action": "STEP_UP_AUTH",
+        "route": "auto",
+        "reason": "Require a challenge before further activity"
+      },
+      {
+        "action": "MONITOR_CARD",
+        "route": "auto",
+        "reason": "Raise monitoring while evidence is pending"
+      }
+    ],
+    "final": [
+      {
+        "action": "BLOCK_CARD",
+        "route": "L1",
+        "reason": "R2: customer denied the transaction"
+      },
+      {
+        "action": "CREATE_CASE",
+        "route": "auto",
+        "reason": "3a: fraud probability above 0.30 requires an internal case"
+      },
+      {
+        "action": "WARN_CUSTOMER",
+        "route": "auto",
+        "reason": "Inform the cardholder of the compromise and the protective steps"
+      }
+    ],
+    "what_changed": "The assumed evidence (customer_validation) moved probability to 0.81 (fraud); added ['BLOCK_CARD', 'CREATE_CASE', 'WARN_CUSTOMER'], dropped ['MONITOR_CARD', 'STEP_UP_AUTH', 'VERIFY_WITH_CUSTOMER']."
+  },
+  "sar": {
+    "file": false,
+    "reason": "No filing: exposure under $1,000 with no shared-origin link (3a)",
+    "narrative": "",
+    "subjects": [],
+    "total_amount_usd": 0,
+    "activity_dates": []
+  },
+  "stop_reason": "A verification response settled the question.",
+  "tool_calls": 5,
+  "tokens": 0,
+  "latency_s": 105.61
+}

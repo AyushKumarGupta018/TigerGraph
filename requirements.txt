@@ -1,0 +1,22 @@
+# Agent orchestration
+langgraph>=0.2
+langchain>=0.3
+langchain-openai>=0.2
+langchain-anthropic>=0.2
+
+# TigerGraph
+pyTigerGraph>=1.6
+
+# Data + maths
+pandas>=2.0
+numpy>=1.26
+networkx>=3.2
+
+# UI
+streamlit>=1.35
+plotly>=5.20
+
+# Plumbing
+python-dotenv>=1.0
+pydantic>=2.6
+pytest>=8.0

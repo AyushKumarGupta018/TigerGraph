@@ -1,0 +1,104 @@
+// ===================================================================
+// Fraud investigation knowledge graph schema.
+//
+// Design notes (written for humans):
+//  - We keep Transaction as a vertex (not an edge) because in the
+//    IEEE-CIS data a transaction connects to *many* things at once:
+//    a card, a device, an IP, a merchant, an email domain. A vertex
+//    lets us hang all of that off one hub and traverse in any order.
+//  - FraudCase lives in the same graph as the entities it concerns.
+//    That is the whole point: past investigations become first-class
+//    evidence for future ones (case memory in the graph).
+//  - The embedding on FraudCase powers similarity search so the agent
+//    can ask "have we seen a case like this before?".
+// ===================================================================
+
+CREATE VERTEX Customer (
+    PRIMARY_ID customer_id STRING,
+    name STRING,
+    since_dt DATETIME,
+    risk_tier STRING DEFAULT "standard"
+) WITH primary_id_as_attribute="true"
+
+CREATE VERTEX Card (
+    PRIMARY_ID card_id STRING,        // card1 in IEEE-CIS terms
+    network STRING,                   // card4: visa / mastercard / ...
+    card_type STRING                  // card6: debit / credit
+) WITH primary_id_as_attribute="true"
+
+CREATE VERTEX Transaction (
+    PRIMARY_ID txn_id STRING,         // TransactionID
+    txn_dt DATETIME,                  // derived from TransactionDT offset
+    amount DOUBLE,                    // TransactionAmt
+    product_cd STRING,                // ProductCD
+    risk_score DOUBLE,                // bank model score - no fraud flag exists!
+    status STRING DEFAULT "posted"    // posted | held | blocked | refunded
+) WITH primary_id_as_attribute="true"
+
+CREATE VERTEX Device (
+    PRIMARY_ID device_id STRING,      // hash of DeviceInfo + id_30/id_31
+    device_type STRING,               // DeviceType: mobile / desktop
+    device_info STRING,
+    os STRING,
+    browser STRING
+) WITH primary_id_as_attribute="true"
+
+CREATE VERTEX IPAddress (
+    PRIMARY_ID ip_hash STRING,
+    geo STRING
+) WITH primary_id_as_attribute="true"
+
+CREATE VERTEX Merchant (
+    PRIMARY_ID merchant_id STRING,
+    category STRING
+) WITH primary_id_as_attribute="true"
+
+CREATE VERTEX EmailDomain (
+    PRIMARY_ID domain STRING          // P_emaildomain / R_emaildomain
+) WITH primary_id_as_attribute="true"
+
+CREATE VERTEX Address (
+    PRIMARY_ID addr_id STRING         // addr1/addr2 region codes
+) WITH primary_id_as_attribute="true"
+
+CREATE VERTEX FraudCase (
+    PRIMARY_ID case_id STRING,
+    opened_dt DATETIME,
+    status STRING,                    // open | evidence_requested | resolved_fraud | resolved_cleared | escalated
+    pattern STRING,                   // best-match fraud typology
+    risk_level STRING,                // low | medium | high | critical
+    confidence DOUBLE,                // agent confidence 0..1
+    summary STRING,
+    outcome STRING,                   // confirmed_fraud | cleared | pending
+    embedding LIST<DOUBLE>            // vector for similar-case retrieval (case memory)
+) WITH primary_id_as_attribute="true"
+
+CREATE VERTEX FraudPattern (
+    PRIMARY_ID pattern_id STRING,     // e.g. account_takeover, card_testing
+    name STRING,
+    description STRING
+) WITH primary_id_as_attribute="true"
+
+CREATE VERTEX Evidence (
+    PRIMARY_ID evidence_id STRING,
+    kind STRING,                      // graph_finding | customer_response | step_up_auth | analyst_note
+    detail STRING,
+    added_dt DATETIME
+) WITH primary_id_as_attribute="true"
+
+// ---- Edges: the connective tissue the investigation walks over ----
+CREATE UNDIRECTED EDGE OWNS_CARD (FROM Customer, TO Card)
+CREATE DIRECTED EDGE MADE_TXN (FROM Card, TO Transaction) WITH REVERSE_EDGE="TXN_BY"
+CREATE UNDIRECTED EDGE CUSTOMER_TXN (FROM Customer, TO Transaction)
+CREATE UNDIRECTED EDGE USED_DEVICE (FROM Transaction, TO Device)
+CREATE UNDIRECTED EDGE FROM_IP (FROM Transaction, TO IPAddress)
+CREATE UNDIRECTED EDGE AT_MERCHANT (FROM Transaction, TO Merchant)
+CREATE UNDIRECTED EDGE USED_EMAIL (FROM Transaction, TO EmailDomain)
+CREATE UNDIRECTED EDGE BILLED_TO (FROM Transaction, TO Address)
+CREATE UNDIRECTED EDGE CASE_TXN (FROM FraudCase, TO Transaction)
+CREATE UNDIRECTED EDGE CASE_CUSTOMER (FROM FraudCase, TO Customer)
+CREATE UNDIRECTED EDGE CASE_EVIDENCE (FROM FraudCase, TO Evidence)
+CREATE UNDIRECTED EDGE MATCHES_PATTERN (FROM FraudCase, TO FraudPattern)
+CREATE UNDIRECTED EDGE SIMILAR_CASE (FROM FraudCase, TO FraudCase, score DOUBLE)
+
+CREATE GRAPH FraudGraph (*)

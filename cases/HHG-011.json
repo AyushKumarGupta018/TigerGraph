@@ -1,0 +1,224 @@
+{
+  "case_id": "HHG-011",
+  "case": {
+    "status": "closed_fraud",
+    "verdict": "fraud",
+    "fraud_probability": 0.99,
+    "pattern": "card_not_present_new_device",
+    "pattern_description": "",
+    "affected_txn_ids": [
+      "3578471",
+      "3578475",
+      "3578483",
+      "3578486",
+      "3578506",
+      "3579400",
+      "3579407",
+      "3580427",
+      "3582671",
+      "3583368",
+      "3583670",
+      "3584155",
+      "3584401",
+      "3584460",
+      "3584516"
+    ],
+    "first_suspicious_txn_id": "3578471",
+    "connected_card_ids": [
+      "C03938-K1",
+      "C05595-K2",
+      "C05678-K1"
+    ],
+    "connected_device_profiles": [
+      "SM-G610F Build/NRD90M | nan | chrome 66.0 for android | nan"
+    ],
+    "exposure_usd": 2001.7,
+    "evidence": [
+      {
+        "claim": "Flagged transaction 3583368: $131.30, online, product C, region nan, model score 0.39 (treated as a reason to look, not a verdict)",
+        "source": "graph",
+        "ref": "query:case_context(txn_id=3583368)",
+        "entity_ids": [
+          "3583368",
+          "C11923-K1"
+        ]
+      },
+      {
+        "claim": "Device profile 'SM-G610F Build/NRD90M | nan | chrome 66.0 for android | nan' is marked NEW for this account (id_15)",
+        "source": "graph",
+        "ref": "query:case_context(txn_id=3583368)",
+        "entity_ids": [
+          "3583368"
+        ]
+      },
+      {
+        "claim": "Out of profile for C11923-K1: amount $131.30 vs average $39.42 (baseline: 10306 txns)",
+        "source": "graph",
+        "ref": "query:card_history(card_id=C11923-K1)",
+        "entity_ids": [
+          "3583368"
+        ]
+      },
+      {
+        "claim": "Burst: 15 out-of-profile online purchases within 48h",
+        "source": "graph",
+        "ref": "query:card_window(card_id=C11923-K1, hours=48)",
+        "entity_ids": [
+          "3578471",
+          "3578475",
+          "3578483",
+          "3578486",
+          "3578506",
+          "3579400",
+          "3579407",
+          "3580427",
+          "3582671",
+          "3583670",
+          "3584155",
+          "3584401",
+          "3584460",
+          "3584516",
+          "3583368"
+        ]
+      },
+      {
+        "claim": "Device profile also used by 3 other card(s) in a 30-day window: C03938-K1, C05595-K2, C05678-K1",
+        "source": "graph",
+        "ref": "query:device_neighbors(device_profile=...)",
+        "entity_ids": [
+          "C03938-K1",
+          "C05595-K2",
+          "C05678-K1"
+        ]
+      },
+      {
+        "claim": "Closed case HHG-011 (fraud, pattern card_not_present_new_device) is similar: same customer, same card. Notes: customer_report alert on 3583368 ($131.30, online). Assessed p=0.99 (fraud), pattern card_not_present_new_device. Key evidence: +0.12: Identity record",
+        "source": "document",
+        "ref": "memory:closed_cases(case_id=HHG-011)",
+        "entity_ids": [
+          "HHG-011"
+        ]
+      },
+      {
+        "claim": "Closed case CC-0031 (confirmed_fraud, pattern card_not_present_new_device) is similar: same customer. Notes: Case CC-0031: cardholder C11923 reported unrecognized activity on card C11923-K2. 1 transaction(s) between 2016-07-02 and 2016-07-02 totaling $20.36 w",
+        "source": "document",
+        "ref": "memory:closed_cases(case_id=CC-0031)",
+        "entity_ids": [
+          "CC-0031"
+        ]
+      },
+      {
+        "claim": "Closed case CC-0290 (confirmed_fraud, pattern card_testing) is similar: same customer. Notes: Case CC-0290: cardholder C11923 reported unrecognized activity on card C11923-K2. 8 transaction(s) between 2016-07-05 and 2016-07-08 totaling $144.56 ",
+        "source": "document",
+        "ref": "memory:closed_cases(case_id=CC-0290)",
+        "entity_ids": [
+          "CC-0290"
+        ]
+      },
+      {
+        "claim": "Closed case CC-1056 (confirmed_fraud, pattern card_not_present_new_device) is similar: same customer. Notes: Case CC-1056: cardholder C11923 reported unrecognized activity on card C11923-K2. 28 transaction(s) between 2016-07-11 and 2016-07-22 totaling $1,557.",
+        "source": "document",
+        "ref": "memory:closed_cases(case_id=CC-1056)",
+        "entity_ids": [
+          "CC-1056"
+        ]
+      },
+      {
+        "claim": "Customer reported the transaction as unrecognised (trigger message)",
+        "source": "customer",
+        "ref": "case_pack:trigger_text",
+        "entity_ids": [
+          "3583368"
+        ]
+      }
+    ],
+    "similar_prior_cases": [
+      "HHG-011",
+      "CC-0031",
+      "CC-0290",
+      "CC-1056"
+    ],
+    "summary": "customer_report alert on 3583368 ($131.30, online). Assessed p=0.99 (fraud), pattern card_not_present_new_device. Key evidence: +0.12: Identity record marks the device as New for this account (id_15); +0.15: Burst of 15 out-of-profile online purchases within 48h; +0.10: Amount and/or product code far outside this card's history. Exposure $2001.70 across 15 transaction(s). Final actions: BLOCK_CARD, CREATE_CASE, FILE_REPORT, MONITOR_CONNECTED_CARDS, WARN_CUSTOMER.",
+    "written_to_graph": true,
+    "graph_case_id": "CASE-2016-HHG-011"
+  },
+  "evidence_requests": [],
+  "next_best_actions": {
+    "initial": [
+      {
+        "action": "BLOCK_CARD",
+        "route": "L1",
+        "reason": "R2: customer denied the transaction"
+      },
+      {
+        "action": "CREATE_CASE",
+        "route": "auto",
+        "reason": "3a: fraud probability above 0.30 requires an internal case"
+      },
+      {
+        "action": "FILE_REPORT",
+        "route": "L2",
+        "reason": "R2/3a: confirmed or strongly suspected fraud with a shared-origin link"
+      },
+      {
+        "action": "MONITOR_CONNECTED_CARDS",
+        "route": "auto",
+        "reason": "R6: shared device profile - protect every card that shares it"
+      },
+      {
+        "action": "WARN_CUSTOMER",
+        "route": "auto",
+        "reason": "Inform the cardholder of the compromise and the protective steps"
+      }
+    ],
+    "final": [
+      {
+        "action": "BLOCK_CARD",
+        "route": "L1",
+        "reason": "R2: customer denied the transaction"
+      },
+      {
+        "action": "CREATE_CASE",
+        "route": "auto",
+        "reason": "3a: fraud probability above 0.30 requires an internal case"
+      },
+      {
+        "action": "FILE_REPORT",
+        "route": "L2",
+        "reason": "R2/3a: confirmed or strongly suspected fraud with a shared-origin link"
+      },
+      {
+        "action": "MONITOR_CONNECTED_CARDS",
+        "route": "auto",
+        "reason": "R6: shared device profile - protect every card that shares it"
+      },
+      {
+        "action": "WARN_CUSTOMER",
+        "route": "auto",
+        "reason": "Inform the cardholder of the compromise and the protective steps"
+      }
+    ],
+    "what_changed": "nothing"
+  },
+  "sar": {
+    "file": true,
+    "reason": "R2/3a: strongly suspected fraud with a shared device profile linking additional cards",
+    "narrative": "Between 2016-12-27 and 2016-12-29, card C11923-K2 belonging to customer C11923 showed 15 suspicious transaction(s) totalling $2001.70, including the flagged $131.30 online transaction 3583368 (region nan). The activity is consistent with card not present new device. The device profile 'SM-G610F Build/NRD90M | nan | chrome 66.0 for android | nan' also transacted on C03938-K1, C05595-K2, C05678-K1 in the same window, indicating a common actor across cardholders. Assumed customer contact: Customer reported the transaction as unrecognised (trigger message). Related closed cases: HHG-011, CC-0031. Assessed fraud probability 0.99. The pattern of activity, its inconsistency with the cardholder's history, and the supporting evidence above are the basis for suspicion.",
+    "subjects": [
+      "C11923",
+      "C11923-K2",
+      "C03938-K1",
+      "C05595-K2",
+      "C05678-K1"
+    ],
+    "total_amount_usd": 2001.7,
+    "activity_dates": [
+      "2016-12-27",
+      "2016-12-29"
+    ]
+  },
+  "stop_reason": "A verification response settled the question.",
+  "tool_calls": 5,
+  "tokens": 0,
+  "latency_s": 10.83
+}

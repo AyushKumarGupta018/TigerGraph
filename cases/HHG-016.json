@@ -1,0 +1,339 @@
+{
+  "case_id": "HHG-016",
+  "case": {
+    "status": "closed_fraud",
+    "verdict": "fraud",
+    "fraud_probability": 0.87,
+    "pattern": "undocumented",
+    "pattern_description": "A single device profile transacts across 71 unrelated cards in a short window, at least one already tied to confirmed fraud. This looks like one operator cycling through card credentials from shared infrastructure - coordinated abuse that matches none of the five documented patterns. Found by walking device-profile neighbours in the graph.",
+    "affected_txn_ids": [
+      "3534820"
+    ],
+    "first_suspicious_txn_id": "3534820",
+    "connected_card_ids": [
+      "C00045-K1",
+      "C00294-K1",
+      "C00854-K1",
+      "C01002-K1",
+      "C01109-K1",
+      "C01351-K1",
+      "C01521-K2",
+      "C01525-K1",
+      "C02181-K1",
+      "C02545-K1",
+      "C02782-K1",
+      "C03047-K1",
+      "C03488-K1",
+      "C04004-K1",
+      "C04021-K1",
+      "C04034-K1",
+      "C04058-K1",
+      "C04386-K1",
+      "C04597-K1",
+      "C04965-K1",
+      "C05031-K2",
+      "C05307-K1",
+      "C05381-K1",
+      "C05381-K2",
+      "C05630-K1",
+      "C05638-K1",
+      "C05793-K1",
+      "C06224-K1",
+      "C06464-K1",
+      "C06630-K1",
+      "C06744-K1",
+      "C07187-K1",
+      "C07196-K1",
+      "C07438-K1",
+      "C07508-K1",
+      "C07562-K1",
+      "C07981-K2",
+      "C08106-K1",
+      "C08281-K1",
+      "C08374-K1",
+      "C08391-K1",
+      "C08610-K1",
+      "C08962-K1",
+      "C09241-K1",
+      "C09246-K1",
+      "C09251-K1",
+      "C09363-K1",
+      "C09365-K1",
+      "C09533-K1",
+      "C09616-K1",
+      "C09657-K1",
+      "C09940-K1",
+      "C10131-K1",
+      "C10644-K1",
+      "C11509-K1",
+      "C11597-K1",
+      "C11799-K1",
+      "C11919-K1",
+      "C11923-K1",
+      "C11995-K1",
+      "C12028-K2",
+      "C12098-K1",
+      "C12212-K1",
+      "C12340-K1",
+      "C12645-K1",
+      "C12987-K1",
+      "C13166-K1",
+      "C13171-K1",
+      "C13407-K1",
+      "C13447-K1"
+    ],
+    "connected_device_profiles": [
+      "Windows | nan | edge 16.0 | nan"
+    ],
+    "exposure_usd": 59.67,
+    "evidence": [
+      {
+        "claim": "Flagged transaction 3534820: $59.67, online, product C, region nan, model score 0.37 (treated as a reason to look, not a verdict)",
+        "source": "graph",
+        "ref": "query:case_context(txn_id=3534820)",
+        "entity_ids": [
+          "3534820",
+          "C09988-K1"
+        ]
+      },
+      {
+        "claim": "Device profile 'Windows | nan | edge 16.0 | nan' is marked NEW for this account (id_15)",
+        "source": "graph",
+        "ref": "query:case_context(txn_id=3534820)",
+        "entity_ids": [
+          "3534820"
+        ]
+      },
+      {
+        "claim": "Charge matches this card's own recurring rhythm: similar amount roughly monthly",
+        "source": "graph",
+        "ref": "query:recurring_pattern(card_id=C09988-K1)",
+        "entity_ids": [
+          "3534820"
+        ]
+      },
+      {
+        "claim": "Device profile also used by 70 other card(s) in a 30-day window: C00045-K1, C00294-K1, C00854-K1, C01002-K1, C01109-K1",
+        "source": "graph",
+        "ref": "query:device_neighbors(device_profile=...)",
+        "entity_ids": [
+          "C00045-K1",
+          "C00294-K1",
+          "C00854-K1",
+          "C01002-K1",
+          "C01109-K1",
+          "C01351-K1",
+          "C01521-K2",
+          "C01525-K1",
+          "C02181-K1",
+          "C02545-K1"
+        ]
+      },
+      {
+        "claim": "Closed case HHG-016 (fraud, pattern undocumented) is similar: same customer, same card. Notes: customer_report alert on 3534820 ($59.67, online). Assessed p=0.87 (fraud), pattern undocumented. Key evidence: +0.12: Identity record marks the devic",
+        "source": "document",
+        "ref": "memory:closed_cases(case_id=HHG-016)",
+        "entity_ids": [
+          "HHG-016"
+        ]
+      },
+      {
+        "claim": "Closed case CC-0014 (confirmed_fraud, pattern card_not_present_fraud) is similar: shared card(s): C01002-K1. Notes: Case CC-0014: cardholder C01002 reported unrecognized activity on card C01002-K1. 1 transaction(s) between 2016-07-02 and 2016-07-02 totaling $75.15 w",
+        "source": "document",
+        "ref": "memory:closed_cases(case_id=CC-0014)",
+        "entity_ids": [
+          "CC-0014"
+        ]
+      },
+      {
+        "claim": "Closed case CC-0094 (confirmed_fraud, pattern card_not_present_fraud) is similar: shared card(s): C12987-K1. Notes: Case CC-0094: cardholder C12987 reported unrecognized activity on card C12987-K1. 1 transaction(s) between 2016-07-05 and 2016-07-05 totaling $37.22 w",
+        "source": "document",
+        "ref": "memory:closed_cases(case_id=CC-0094)",
+        "entity_ids": [
+          "CC-0094"
+        ]
+      },
+      {
+        "claim": "Closed case CC-0135 (confirmed_fraud, pattern card_not_present_new_device) is similar: shared card(s): C01521-K2. Notes: Case CC-0135: cardholder C01521 reported unrecognized activity on card C01521-K2. 8 transaction(s) between 2016-07-02 and 2016-07-05 totaling $428.65 ",
+        "source": "document",
+        "ref": "memory:closed_cases(case_id=CC-0135)",
+        "entity_ids": [
+          "CC-0135"
+        ]
+      },
+      {
+        "claim": "Customer reported the transaction as unrecognised (trigger message)",
+        "source": "customer",
+        "ref": "case_pack:trigger_text",
+        "entity_ids": [
+          "3534820"
+        ]
+      }
+    ],
+    "similar_prior_cases": [
+      "HHG-016",
+      "CC-0014",
+      "CC-0094",
+      "CC-0135"
+    ],
+    "summary": "customer_report alert on 3534820 ($59.67, online). Assessed p=0.87 (fraud), pattern undocumented. Key evidence: +0.12: Identity record marks the device as New for this account (id_15); +0.20: Device profile shared with 70 other card(s) in the window: C00045-K1, C00294-K1, C00854-K1, C01002-K1; +0.10: That shared element already appears in confirmed-fraud history. Exposure $59.67 across 1 transaction(s). Final actions: BLOCK_CARD, CREATE_CASE, FILE_REPORT, MONITOR_CONNECTED_CARDS, ESCALATE_TO_ANALYST, WARN_CUSTOMER.",
+    "written_to_graph": true,
+    "graph_case_id": "CASE-2016-HHG-016"
+  },
+  "evidence_requests": [],
+  "next_best_actions": {
+    "initial": [
+      {
+        "action": "BLOCK_CARD",
+        "route": "L1",
+        "reason": "R2: customer denied the transaction"
+      },
+      {
+        "action": "CREATE_CASE",
+        "route": "auto",
+        "reason": "3a: fraud probability above 0.30 requires an internal case"
+      },
+      {
+        "action": "FILE_REPORT",
+        "route": "L2",
+        "reason": "R2/3a: confirmed or strongly suspected fraud with a shared-origin link"
+      },
+      {
+        "action": "MONITOR_CONNECTED_CARDS",
+        "route": "auto",
+        "reason": "R6: shared device profile - protect every card that shares it"
+      },
+      {
+        "action": "ESCALATE_TO_ANALYST",
+        "route": "auto",
+        "reason": "R9: undocumented coordinated pattern needs human review"
+      },
+      {
+        "action": "WARN_CUSTOMER",
+        "route": "auto",
+        "reason": "Inform the cardholder of the compromise and the protective steps"
+      }
+    ],
+    "final": [
+      {
+        "action": "BLOCK_CARD",
+        "route": "L1",
+        "reason": "R2: customer denied the transaction"
+      },
+      {
+        "action": "CREATE_CASE",
+        "route": "auto",
+        "reason": "3a: fraud probability above 0.30 requires an internal case"
+      },
+      {
+        "action": "FILE_REPORT",
+        "route": "L2",
+        "reason": "R2/3a: confirmed or strongly suspected fraud with a shared-origin link"
+      },
+      {
+        "action": "MONITOR_CONNECTED_CARDS",
+        "route": "auto",
+        "reason": "R6: shared device profile - protect every card that shares it"
+      },
+      {
+        "action": "ESCALATE_TO_ANALYST",
+        "route": "auto",
+        "reason": "R9: undocumented coordinated pattern needs human review"
+      },
+      {
+        "action": "WARN_CUSTOMER",
+        "route": "auto",
+        "reason": "Inform the cardholder of the compromise and the protective steps"
+      }
+    ],
+    "what_changed": "nothing"
+  },
+  "sar": {
+    "file": true,
+    "reason": "R2/3a: strongly suspected fraud with a shared device profile linking additional cards",
+    "narrative": "Between 2016-12-11 and 2016-12-11, card C09988-K1 belonging to customer C09988 showed 1 suspicious transaction(s) totalling $59.67, including the flagged $59.67 online transaction 3534820 (region nan). The activity is consistent with undocumented. The device profile 'Windows | nan | edge 16.0 | nan' also transacted on C00045-K1, C00294-K1, C00854-K1, C01002-K1, C01109-K1, C01351-K1, C01521-K2, C01525-K1, C02181-K1, C02545-K1, C02782-K1, C03047-K1, C03488-K1, C04004-K1, C04021-K1, C04034-K1, C04058-K1, C04386-K1, C04597-K1, C04965-K1, C05031-K2, C05307-K1, C05381-K1, C05381-K2, C05630-K1, C05638-K1, C05793-K1, C06224-K1, C06464-K1, C06630-K1, C06744-K1, C07187-K1, C07196-K1, C07438-K1, C07508-K1, C07562-K1, C07981-K2, C08106-K1, C08281-K1, C08374-K1, C08391-K1, C08610-K1, C08962-K1, C09241-K1, C09246-K1, C09251-K1, C09363-K1, C09365-K1, C09533-K1, C09616-K1, C09657-K1, C09940-K1, C10131-K1, C10644-K1, C11509-K1, C11597-K1, C11799-K1, C11919-K1, C11923-K1, C11995-K1, C12028-K2, C12098-K1, C12212-K1, C12340-K1, C12645-K1, C12987-K1, C13166-K1, C13171-K1, C13407-K1, C13447-K1 in the same window, indicating a common actor across cardholders. Assumed customer contact: Customer reported the transaction as unrecognised (trigger message). Related closed cases: HHG-016, CC-0014. Assessed fraud probability 0.87. The pattern of activity, its inconsistency with the cardholder's history, and the supporting evidence above are the basis for suspicion.",
+    "subjects": [
+      "C09988",
+      "C09988-K1",
+      "C00045-K1",
+      "C00294-K1",
+      "C00854-K1",
+      "C01002-K1",
+      "C01109-K1",
+      "C01351-K1",
+      "C01521-K2",
+      "C01525-K1",
+      "C02181-K1",
+      "C02545-K1",
+      "C02782-K1",
+      "C03047-K1",
+      "C03488-K1",
+      "C04004-K1",
+      "C04021-K1",
+      "C04034-K1",
+      "C04058-K1",
+      "C04386-K1",
+      "C04597-K1",
+      "C04965-K1",
+      "C05031-K2",
+      "C05307-K1",
+      "C05381-K1",
+      "C05381-K2",
+      "C05630-K1",
+      "C05638-K1",
+      "C05793-K1",
+      "C06224-K1",
+      "C06464-K1",
+      "C06630-K1",
+      "C06744-K1",
+      "C07187-K1",
+      "C07196-K1",
+      "C07438-K1",
+      "C07508-K1",
+      "C07562-K1",
+      "C07981-K2",
+      "C08106-K1",
+      "C08281-K1",
+      "C08374-K1",
+      "C08391-K1",
+      "C08610-K1",
+      "C08962-K1",
+      "C09241-K1",
+      "C09246-K1",
+      "C09251-K1",
+      "C09363-K1",
+      "C09365-K1",
+      "C09533-K1",
+      "C09616-K1",
+      "C09657-K1",
+      "C09940-K1",
+      "C10131-K1",
+      "C10644-K1",
+      "C11509-K1",
+      "C11597-K1",
+      "C11799-K1",
+      "C11919-K1",
+      "C11923-K1",
+      "C11995-K1",
+      "C12028-K2",
+      "C12098-K1",
+      "C12212-K1",
+      "C12340-K1",
+      "C12645-K1",
+      "C12987-K1",
+      "C13166-K1",
+      "C13171-K1",
+      "C13407-K1",
+      "C13447-K1"
+    ],
+    "total_amount_usd": 59.67,
+    "activity_dates": [
+      "2016-12-11",
+      "2016-12-11"
+    ]
+  },
+  "stop_reason": "Fraud probability 0.87 >= 0.85 supported by 8 independent pieces of evidence.",
+  "tool_calls": 5,
+  "tokens": 0,
+  "latency_s": 11.44
+}
